@@ -9,6 +9,7 @@ Model Context Protocol is an open standard by Anthropic that connects AI models 
 ## Features
 
 - Live news headlines via Google News RSS — no API key required
+- Interactive CLI — type any topic and get live results instantly
 - Search news by any topic (AI, finance, climate, sports, etc.)
 - Works with Claude Desktop (GUI) and a Python MCP client (programmatic)
 - Built with FastMCP for clean, decorator-based tool definition
@@ -18,7 +19,7 @@ Model Context Protocol is an open standard by Anthropic that connects AI models 
 ```
 news-mcp/
 ├── server.py        # MCP server — exposes get_news tool
-├── client.py        # Python MCP client — connects and calls tools directly
+├── client.py        # Interactive Python MCP client
 ├── pyproject.toml   # Project dependencies
 └── uv.lock          # Dependency lockfile
 ```
@@ -47,7 +48,7 @@ cd news-mcp
 uv sync
 ```
 
-**3. Run the Python client**
+**3. Run the interactive client**
 ```bash
 uv run client.py
 ```
@@ -55,17 +56,25 @@ uv run client.py
 ## Example Output
 
 ```
-Available tools:
-  - get_news: Fetch latest news headlines for a given topic from Google News RSS.
+=== News MCP Client ===
+Type a topic to search, or 'quit' to exit.
 
-Fetching news on 'artificial intelligence'...
-Latest news on 'artificial intelligence':
+Search topic: climate change
 
-- Pope Leo Warns Artificial Intelligence Could Be "New Tower Of Babel" (Mon, 25 May 2026)
+Fetching news on 'climate change'...
+
+Latest news on 'climate change':
+
+- UN Report Warns of Accelerating Ice Loss (Tue, 27 May 2026)
   https://news.google.com/...
 
-- Artificial Intelligence Floods Court Dockets with Home-Brewed Lawsuits (Mon, 25 May 2026)
+- G7 Nations Agree on New Carbon Targets (Mon, 26 May 2026)
   https://news.google.com/...
+
+--------------------------------------------------
+
+Search topic: quit
+Bye!
 ```
 
 ## Claude Desktop Setup
@@ -94,9 +103,10 @@ where.exe uv
 
 1. Client launches `server.py` as a subprocess via stdio transport
 2. MCP handshake initializes the connection
-3. Client calls `get_news` with a topic string
-4. Server encodes the topic, fetches Google News RSS, parses top 5 entries
-5. Results returned as formatted text over stdout
+3. User types a topic in the interactive prompt
+4. Client calls `get_news` with the topic
+5. Server encodes the topic, fetches Google News RSS, parses top 5 entries
+6. Results printed to terminal — repeat until user types `quit`
 
 ## Next Steps
 
