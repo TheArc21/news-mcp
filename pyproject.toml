@@ -1,0 +1,11 @@
+[project]
+name = "news-mcp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=0.104.1",
+    "feedparser>=6.0.12",
+    "mcp>=1.27.1",
+]
