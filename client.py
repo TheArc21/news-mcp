@@ -1,6 +1,12 @@
 import asyncio
+import sys
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+
+async def async_input(prompt):
+    print(prompt, end="", flush=True)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, sys.stdin.readline)
 
 async def main():
     server_params = StdioServerParameters(
@@ -13,13 +19,22 @@ async def main():
         async with ClientSession(read, write) as session:
             await session.initialize()
 
-            tools = await session.list_tools()
-            print("Available tools:")
-            for tool in tools.tools:
-                print(f"  - {tool.name}: {tool.description}")
+            print("=== News MCP Client ===")
+            print("Type a topic to search, or 'quit' to exit.\n")
 
-            print("\nFetching news on 'artificial intelligence'...")
-            result = await session.call_tool("get_news", {"topic": "artificial intelligence"})
-            print(result.content[0].text)
+            while True:
+                topic = (await async_input("Search topic: ")).strip()
 
-asyncio.run(asyncio.wait_for(main(), timeout=30))
+                if topic.lower() in ("quit", "exit", "q"):
+                    print("Bye!")
+                    break
+
+                if not topic:
+                    continue
+
+                print(f"\nFetching news on '{topic}'...\n")
+                result = await session.call_tool("get_news", {"topic": topic})
+                print(result.content[0].text)
+                print("\n" + "-" * 50 + "\n")
+
+asyncio.run(asyncio.wait_for(main(), timeout=300))
